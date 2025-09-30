@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: datahub-passport
+    name: ic-data-passport
     env: python
-    region: frankfurt
+    runtime: python-3.12.9  # ← явное указание
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python app_passport_dt.py"
