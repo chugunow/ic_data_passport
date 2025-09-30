@@ -2,7 +2,7 @@ import os
 import re
 import json
 import tempfile
-from flask import Flask, request, render_template_string, send_file
+from flask import Flask, request, render_template_string, send_file, send_from_directory
 import pandas as pd
 
 app = Flask(__name__)
@@ -21,10 +21,21 @@ HTML = '''
         button:hover { background: #45a049; }
         .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; }
         .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; }
+        .template-link {
+            display: inline-block;
+            margin: 10px 0;
+            color: #1E88E5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .template-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <h2>Генерация JSON-паспорта из Excel</h2>
+    <p>
+        <a href="/download-template" class="template-link">📥 Скачать шаблон Excel</a>
+    </p>
     <form method="post" enctype="multipart/form-data">
         <label>Выберите Excel-файл (.xlsx):</label>
         <input type="file" name="file" accept=".xlsx" required>
@@ -45,6 +56,21 @@ def clean_excel_value(val):
         return None
     s = str(val).strip()
     return s if s != "" else None
+
+
+@app.route('/download-template')
+def download_template():
+    try:
+        return send_from_directory(
+            directory=os.path.dirname(__file__),
+            path="example_excel_table_dataset_passport.xlsx",
+            as_attachment=True,
+            download_name="example_excel_table_dataset_passport.xlsx"
+        )
+    except FileNotFoundError:
+        return "Шаблон не найден на сервере.", 404
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
