@@ -93,8 +93,8 @@ def index():
                 full_name = clean_excel_value(additional_data.iloc[2, 1])
                 description = clean_excel_value(additional_data.iloc[3, 1])
                 geo_type = clean_excel_value(additional_data.iloc[4, 1])
-                periodicity = clean_excel_value(additional_data.iloc[5, 1])
-                schedule = additional_data.iloc[6, 1]
+                schedule = clean_excel_value(additional_data.iloc[5, 1])
+                
 
                 external_name_id = clean_excel_value(additional_data.iloc[1, 4])
                 name_external = clean_excel_value(additional_data.iloc[2, 4])
@@ -107,7 +107,7 @@ def index():
                     "B3 (full_name)": full_name,
                     "B4 (description)": description,
                     "B5 (geo_type)": geo_type,
-                    "B6 (periodicity)": periodicity,
+                    "B6 (schedule)": schedule,
                 }
                 missing = [k for k, v in required.items() if v is None]
                 if missing:
@@ -157,15 +157,9 @@ def index():
                     result_lines.append({"code": "analytical_committee_num", "name": "Номер аналитического комитета", "dataType": "String", "isNullable": True, "isUnique": False})
                 result_lines.append({"code": "create_dttm", "name": "Дата и время формирования новой версии данных", "dataType": "DateTime", "isNullable": True, "isUnique": False})
 
-                # Schedule
-                if hasattr(schedule, 'hour'):
-                    schedule_str = f"{schedule.hour:02}:{schedule.minute:02}"
-                elif isinstance(schedule, str) and len(schedule) >= 5:
-                    schedule_str = schedule[:5]
-                else:
-                    schedule_str = "00:00"
+            
 
-                geo_map = {"Точка": "Point", "Линия": "MultiLineString", "Полигон": "MultiPolygon"}
+                geo_map = {"Точка": "Точка", "Линия": "Мультилиния", "Полигон": "Мультиполигон"}
                 geometry_type = geo_map[geo_type]
 
                 json_output = {
@@ -182,7 +176,7 @@ def index():
                                 "ip": ""
                             },
                             "responsiblePerson": {
-                                "fio": "Петров В.В.",
+                                "fio": "Петров Вячеслав Валерьевич",
                                 "position": "Советник руководителя",
                                 "email": "PetrovVV@transport.mos.ru",
                                 "phone": "+7 926 206 8246"
@@ -192,8 +186,8 @@ def index():
                                 "phone": "+7 926 206 8246"
                             }
                         },
-                        "updateParams": {"periodicity": periodicity, "schedule": schedule_str},
-                        "geoData": {"srid": "WGS 84", "type": geometry_type}
+                        "updateParams": {"schedule": schedule},
+                        "geoData": {"srid": "EPSG:4326-WGS 84", "type": geometry_type}
                     },
                     "datasetAttributes": result_lines
                 }
