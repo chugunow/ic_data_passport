@@ -165,6 +165,7 @@ def index():
                 json_output = {
                     "datasetData": {
                         "mainData": {
+                            "passportType": "geojson",
                             "fullName": full_name,
                             "description": description,
                             "oiv": "Инновационный центр «Безопасный транспорт»",
